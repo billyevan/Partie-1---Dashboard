@@ -6,7 +6,7 @@ import numpy as np
 '''This file contains the functions used to extract the data from the graph (and dataframes) and to prepare it for the dashboard'''
 
 # Load the graph
-G = nx.read_graphml('database_formated_for_NetworkX.graphml')
+# G = nx.read_graphml('database_formated_for_NetworkX.graphml')
 
 # Function to measure the number of interactions for each type of event
 def mesure_activity_intensity(G, event_type):
@@ -44,7 +44,7 @@ def tweets_per_category(G):
         })
     return pd.DataFrame(tpc)
 
-tweets_per_category_df = tweets_per_category(G)
+# tweets_per_category_df = tweets_per_category(G)
 
 from collections import defaultdict
 
@@ -58,32 +58,32 @@ def tweets_per_priority(G):
     priority_counts = {priority: len(nodes_list) for priority, nodes_list in priority_nodes.items()}
     return priority_counts
 
-priority_counts = tweets_per_priority(G)
-priority_counts_df = pd.DataFrame(priority_counts.items(), columns=['Priority', 'Count'])
+# priority_counts = tweets_per_priority(G)
+# priority_counts_df = pd.DataFrame(priority_counts.items(), columns=['Priority', 'Count'])
   
 # Get total number of tweets, users and hashtags
 
-tweet_nodes = [
-    node 
-    for node, data in G.nodes(data=True) 
-    if data.get("labels") == ":Tweet"
-]
+# tweet_nodes = [
+#     node 
+#     for node, data in G.nodes(data=True) 
+#     if data.get("labels") == ":Tweet"
+# ]
 
-user_nodes = [
-    node 
-    for node, data in G.nodes(data=True) 
-    if data.get("labels") == ":User"
-]
+# user_nodes = [
+#     node 
+#     for node, data in G.nodes(data=True) 
+#     if data.get("labels") == ":User"
+# ]
 
-hashtag_nodes = [
-    node 
-    for node, data in G.nodes(data=True) 
-    if data.get("labels") == ":Hashtag"
-]
+# hashtag_nodes = [
+#     node 
+#     for node, data in G.nodes(data=True) 
+#     if data.get("labels") == ":Hashtag"
+# ]
 
-num_tweets = len(tweet_nodes)
-num_users = len(user_nodes)
-num_hashtags = len(hashtag_nodes)
+# num_tweets = len(tweet_nodes)
+# num_users = len(user_nodes)
+# num_hashtags = len(hashtag_nodes)
 
 # Get top 10 users for diffferent metrics
 """We define dataframes based on past calculation as recalculation would be too long"""
@@ -122,56 +122,56 @@ top_10_diffuse_info = {
 
 top_10_diffuse_info_df = pd.DataFrame(top_10_diffuse_info)
 
-# Count the number of interactions between users
+# # Count the number of interactions between users
 
-from collections import Counter
+# from collections import Counter
 
-# Types d'interactions à analyser
-user_interact_type = ["RETWEETS", "REPLIED_TO", "MENTIONS"]
+# # Types d'interactions à analyser
+# user_interact_type = ["RETWEETS", "REPLIED_TO", "MENTIONS"]
 
-# Comptage des types d'interactions entre utilisateurs
-edge_type_counts = Counter()
-for interact_type in user_interact_type:
-    edge_with_type = [(u, v) for u, v, data in G.edges(data=True) if data.get('label') == interact_type]
-    edge_type_counts[interact_type] = len(edge_with_type)
+# # Comptage des types d'interactions entre utilisateurs
+# edge_type_counts = Counter()
+# for interact_type in user_interact_type:
+#     edge_with_type = [(u, v) for u, v, data in G.edges(data=True) if data.get('label') == interact_type]
+#     edge_type_counts[interact_type] = len(edge_with_type)
 
-edge_type_counts["Retweets"] = edge_type_counts.pop("RETWEETS")
-edge_type_counts["Replies"] = edge_type_counts.pop("REPLIED_TO")
-edge_type_counts["Mentions"] = edge_type_counts.pop("MENTIONS")
+# edge_type_counts["Retweets"] = edge_type_counts.pop("RETWEETS")
+# edge_type_counts["Replies"] = edge_type_counts.pop("REPLIED_TO")
+# edge_type_counts["Mentions"] = edge_type_counts.pop("MENTIONS")
 
-# Créer un DataFrame pour la visualisation
-edge_type_df = pd.DataFrame({
-    'Type of interaction': list(edge_type_counts.keys()),
-    'Number of interactions': list(edge_type_counts.values())
-})
+# # Créer un DataFrame pour la visualisation
+# edge_type_df = pd.DataFrame({
+#     'Type of interaction': list(edge_type_counts.keys()),
+#     'Number of interactions': list(edge_type_counts.values())
+# })
 
-# Count user activity
+# # Count user activity
 
-user_activity = {}
+# user_activity = {}
 
-for node, data in G.nodes(data=True):
-    if data.get('labels') == ':User':
-        user_id = data.get('name')
-        tweets = 0
-        retweets = 0
-        replies = 0
+# for node, data in G.nodes(data=True):
+#     if data.get('labels') == ':User':
+#         user_id = data.get('name')
+#         tweets = 0
+#         retweets = 0
+#         replies = 0
 
-        # Comptage des tweets postés par l'utilisateur
-        tweets = sum(1 for _, _, edge_data in G.edges(node, data=True) if edge_data.get('label') == 'POSTED')
+#         # Comptage des tweets postés par l'utilisateur
+#         tweets = sum(1 for _, _, edge_data in G.edges(node, data=True) if edge_data.get('label') == 'POSTED')
 
-        # Comptage des retweets postés par l'utilisateur
-        retweets = sum(1 for _, _, edge_data in G.edges(node, data=True) if edge_data.get('label') == 'RETWEETS')
+#         # Comptage des retweets postés par l'utilisateur
+#         retweets = sum(1 for _, _, edge_data in G.edges(node, data=True) if edge_data.get('label') == 'RETWEETS')
 
-        # Comptage des réponses postées par l'utilisateur
-        replies = sum(1 for _, _, edge_data in G.edges(node, data=True) if edge_data.get('label') == 'REPLIED_TO')
+#         # Comptage des réponses postées par l'utilisateur
+#         replies = sum(1 for _, _, edge_data in G.edges(node, data=True) if edge_data.get('label') == 'REPLIED_TO')
 
-        # Stockage des résultats
-        user_activity[user_id] = {
-            'Tweets': tweets,
-            'Retweets': retweets,
-            'Replies': replies,
-            'Total': tweets + retweets + replies
-        }
+#         # Stockage des résultats
+#         user_activity[user_id] = {
+#             'Tweets': tweets,
+#             'Retweets': retweets,
+#             'Replies': replies,
+#             'Total': tweets + retweets + replies
+#         }
 
-user_activity_df = pd.DataFrame.from_dict(user_activity, orient='index').reset_index()
-user_activity_df.rename(columns={'index': 'User'}, inplace=True)
+# user_activity_df = pd.DataFrame.from_dict(user_activity, orient='index').reset_index()
+# user_activity_df.rename(columns={'index': 'User'}, inplace=True)
